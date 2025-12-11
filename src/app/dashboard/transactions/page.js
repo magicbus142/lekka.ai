@@ -340,9 +340,9 @@ export default function TransactionsPage() {
       </div>
 
       {/* FILTERS TOOLBAR */}
-      <div className="bg-card border border-border rounded-xl p-4 flex flex-col md:flex-row gap-4 items-end md:items-center flex-wrap">
-         {/* Search */}
-         <div className="relative flex-1 min-w-[200px] w-full md:w-auto">
+      <div className="bg-card border border-border rounded-xl p-4 flex flex-col gap-4">
+         {/* Top Row: Search (Full Width) */}
+         <div className="relative w-full">
             <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
             <input 
               placeholder="Search transactions..." 
@@ -352,72 +352,71 @@ export default function TransactionsPage() {
             />
          </div>
 
-         {/* Type Filter */}
-          <div className="w-full md:w-auto">
-            <select 
-              className="w-full px-3 py-2 rounded-lg border border-input bg-background"
-              value={filterType}
-              onChange={(e) => setFilterType(e.target.value)}
-            >
-              <option value="all">All Types</option>
-              <option value="income">Income Only</option>
-              <option value="expense">Expense Only</option>
-            </select>
-          </div>
-
-          {/* Status Filter */}
-          <div className="w-full md:w-auto">
-            <select 
-              className="w-full px-3 py-2 rounded-lg border border-input bg-background"
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
-            >
-              <option value="all">All Status</option>
-              <option value="Paid">Paid</option>
-              <option value="Pending">Pending</option>
-            </select>
-          </div>
-
-          {/* Method Filter */}
-          <div className="w-full md:w-auto">
+         {/* Middle Row: Filters Grid */}
+         <div className="grid grid-cols-2 md:flex md:flex-row gap-3 md:gap-4 md:items-center">
+             {/* Type */}
              <select 
-              className="w-full px-3 py-2 rounded-lg border border-input bg-background"
-              value={filterMethod}
-              onChange={(e) => setFilterMethod(e.target.value)}
-            >
-              <option value="all">All Methods</option>
-              <option value="Cash">Cash</option>
-              <option value="UPI">UPI</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
+               className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm"
+               value={filterType}
+               onChange={(e) => setFilterType(e.target.value)}
+             >
+               <option value="all">All Types</option>
+               <option value="income">Income</option>
+               <option value="expense">Expense</option>
+             </select>
 
-         {/* Date Range */}
-         <div className="w-full md:w-auto">
-           <DateRangePicker 
-               from={dateRange.from}
-               to={dateRange.to}
-               onFromChange={(val) => setDateRange({...dateRange, from: val})}
-               onToChange={(val) => setDateRange({...dateRange, to: val})}
-               onClear={(dateRange.from || dateRange.to) ? () => setDateRange({ from: '', to: '' }) : null}
-           />
+             {/* Status */}
+             <select 
+               className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm"
+               value={filterStatus}
+               onChange={(e) => setFilterStatus(e.target.value)}
+             >
+               <option value="all">All Status</option>
+               <option value="Paid">Paid</option>
+               <option value="Pending">Pending</option>
+             </select>
+
+             {/* Method */}
+             <select 
+               className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm"
+               value={filterMethod}
+               onChange={(e) => setFilterMethod(e.target.value)}
+             >
+               <option value="all">All Methods</option>
+               <option value="Cash">Cash</option>
+               <option value="UPI">UPI</option>
+               <option value="Other">Other</option>
+             </select>
+
+             {/* Date Range - Spans 2 cols on mobile if needed, or just fits in grid */}
+             <div className="col-span-2 md:col-span-1 md:w-auto">
+                <DateRangePicker 
+                    from={dateRange.from}
+                    to={dateRange.to}
+                    onFromChange={(val) => setDateRange({...dateRange, from: val})}
+                    onToChange={(val) => setDateRange({...dateRange, to: val})}
+                    onClear={(dateRange.from || dateRange.to) ? () => setDateRange({ from: '', to: '' }) : null}
+                />
+             </div>
          </div>
 
-          {/* Clear Filters */}
-          {(search || filterType !== 'all' || filterStatus !== 'all' || filterMethod !== 'all' || dateRange.from) && (
-             <button 
-                onClick={() => {
-                  setSearch('')
-                  setFilterType('all')
-                  setFilterCategory('all')
-                  setFilterStatus('all')
-                  setFilterMethod('all')
-                  setDateRange({ from: '', to: '' })
-                }}
-               className="px-3 py-2 text-sm text-muted-foreground hover:bg-muted rounded-lg"
-             >
-               Clear
-             </button>
+         {/* Clear Button (Mobile: Full Width, Desktop: Auto) */}
+         {(search || filterType !== 'all' || filterStatus !== 'all' || filterMethod !== 'all' ||  dateRange.from) && (
+             <div className="flex justify-end md:w-auto">
+                 <button 
+                   onClick={() => {
+                     setSearch('')
+                     setFilterType('all')
+                     setFilterCategory('all')
+                     setFilterStatus('all')
+                     setFilterMethod('all')
+                     setDateRange({ from: '', to: '' })
+                   }}
+                   className="px-4 py-2 text-sm text-red-600 bg-red-50 hover:bg-red-100 rounded-lg w-full md:w-auto text-center"
+                 >
+                   Clear Filters
+                 </button>
+             </div>
          )}
       </div>
 
@@ -701,7 +700,7 @@ export default function TransactionsPage() {
                     )}
 
                     {/* 6. Payment Method & Status */}
-                    <div className="grid grid-cols-2 gap-6 pt-2 border-t border-border border-dashed">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2 border-t border-border border-dashed">
                         {/* Method */}
                         <div className="space-y-2">
                            <label className="text-xs font-medium text-muted-foreground block">Payment Method</label>
