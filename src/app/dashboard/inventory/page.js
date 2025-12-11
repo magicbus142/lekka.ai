@@ -153,7 +153,8 @@ export default function InventoryPage() {
        sku: newProduct.sku,
        stock: parseInt(newProduct.stock),
        min_stock_level: parseInt(newProduct.minStock),
-       image_url: newProduct.image
+       min_stock_level: parseInt(newProduct.minStock),
+       image_url: newProduct.image || null
     }
     
     if (!editingId) {
@@ -447,7 +448,12 @@ export default function InventoryPage() {
                         </div>
                         {newProduct.image && (
                             <div className="w-16 h-16 rounded-lg border border-border bg-muted overflow-hidden">
-                                <img src={newProduct.image} alt="Preview" className="w-full h-full object-cover" />
+                                <img 
+                                  src={newProduct.image} 
+                                  alt="Preview" 
+                                  className="w-full h-full object-cover"
+                                  onError={(e) => { e.target.style.display = 'none' }} 
+                                />
                             </div>
                         )}
                     </div>

@@ -151,6 +151,7 @@ export default function WorkersPage() {
     const item = {
       ...formData,
       salary: formData.salary ? parseFloat(formData.salary) : 0,
+      image_url: formData.image_url || null,
       user_id: userId
     }
 
@@ -477,6 +478,7 @@ export default function WorkersPage() {
               </div>
               <form onSubmit={handleSubmit} className="p-6 space-y-4">
                 {/* Image Upload */}
+                {/* Image Upload (Disabled)
                 <div className="flex justify-center mb-4">
                     <div className="relative group cursor-pointer w-24 h-24 rounded-full bg-muted border-2 border-dashed border-border flex items-center justify-center overflow-hidden hover:border-primary transition-colors">
                         {formData.image_url ? (
@@ -496,6 +498,7 @@ export default function WorkersPage() {
                         />
                     </div>
                 </div>
+                */}
 
                 <div>
                   <label className="text-sm font-medium mb-1 block">Name</label>

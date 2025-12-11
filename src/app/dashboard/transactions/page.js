@@ -30,6 +30,8 @@ export default function TransactionsPage() {
   const [search, setSearch] = useState('')
   const [filterType, setFilterType] = useState('all') // all, income, expense
   const [filterCategory, setFilterCategory] = useState('all')
+  const [filterStatus, setFilterStatus] = useState('all')
+  const [filterMethod, setFilterMethod] = useState('all')
   const [dateRange, setDateRange] = useState({ from: '', to: '' })
 
   const [formData, setFormData] = useState({
@@ -258,9 +260,16 @@ export default function TransactionsPage() {
      if (filterType !== 'all' && t.type !== filterType) return false
 
      // 3. Filter Category
+     // 3. Filter Category
      if (filterCategory !== 'all' && t.category !== filterCategory) return false
 
-     // 4. Date Range
+     // 4. Filter Status
+     if (filterStatus !== 'all' && t.payment_status !== filterStatus) return false
+
+     // 5. Filter Method
+     if (filterMethod !== 'all' && t.payment_method !== filterMethod) return false
+
+     // 6. Date Range
      if (dateRange.from && dateRange.to) {
         const tDate = parseISO(t.date)
         const start = startOfDay(parseISO(dateRange.from))
@@ -273,6 +282,9 @@ export default function TransactionsPage() {
 
   const totalIncome = transactions.filter(t => t.type === 'income').reduce((acc, t) => acc + Number(t.amount), 0)
   const totalExpense = transactions.filter(t => t.type === 'expense').reduce((acc, t) => acc + Number(t.amount), 0)
+  
+  // Dynamic Total for Pending View
+  const visibleTotal = filteredTransactions.reduce((acc, t) => acc + Number(t.amount), 0)
 
   return (
     <div className="space-y-6 relative min-h-[80vh]">
@@ -312,6 +324,19 @@ export default function TransactionsPage() {
           <p className="text-sm text-muted-foreground mb-1">Balance</p>
           <p className="text-2xl font-bold">₹{(totalIncome - totalExpense).toLocaleString()}</p>
         </div>
+        
+        {/* Pending Summary (Only visible when filtering by Pending) */}
+        {filterStatus === 'Pending' && (
+             <div className="bg-orange-50 p-4 rounded-xl border border-orange-200 col-span-2 md:col-span-3 flex items-center justify-between">
+                <div>
+                    <p className="text-sm text-orange-600 font-medium mb-1">Total Pending Amount</p>
+                    <p className="text-3xl font-bold text-orange-700">₹{visibleTotal.toLocaleString()}</p>
+                </div>
+                <div className="text-right text-xs text-orange-600/80">
+                    Based on current filters
+                </div>
+             </div>
+        )}
       </div>
 
       {/* FILTERS TOOLBAR */}
@@ -328,17 +353,44 @@ export default function TransactionsPage() {
          </div>
 
          {/* Type Filter */}
-         <div className="w-full md:w-auto">
-           <select 
-             className="w-full px-3 py-2 rounded-lg border border-input bg-background"
-             value={filterType}
-             onChange={(e) => setFilterType(e.target.value)}
-           >
-             <option value="all">All Types</option>
-             <option value="income">Income Only</option>
-             <option value="expense">Expense Only</option>
-           </select>
-         </div>
+          <div className="w-full md:w-auto">
+            <select 
+              className="w-full px-3 py-2 rounded-lg border border-input bg-background"
+              value={filterType}
+              onChange={(e) => setFilterType(e.target.value)}
+            >
+              <option value="all">All Types</option>
+              <option value="income">Income Only</option>
+              <option value="expense">Expense Only</option>
+            </select>
+          </div>
+
+          {/* Status Filter */}
+          <div className="w-full md:w-auto">
+            <select 
+              className="w-full px-3 py-2 rounded-lg border border-input bg-background"
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+            >
+              <option value="all">All Status</option>
+              <option value="Paid">Paid</option>
+              <option value="Pending">Pending</option>
+            </select>
+          </div>
+
+          {/* Method Filter */}
+          <div className="w-full md:w-auto">
+             <select 
+              className="w-full px-3 py-2 rounded-lg border border-input bg-background"
+              value={filterMethod}
+              onChange={(e) => setFilterMethod(e.target.value)}
+            >
+              <option value="all">All Methods</option>
+              <option value="Cash">Cash</option>
+              <option value="UPI">UPI</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
 
          {/* Date Range */}
          <div className="w-full md:w-auto">
@@ -351,15 +403,17 @@ export default function TransactionsPage() {
            />
          </div>
 
-         {/* Clear Filters */}
-         {(search || filterType !== 'all' || dateRange.from) && (
+          {/* Clear Filters */}
+          {(search || filterType !== 'all' || filterStatus !== 'all' || filterMethod !== 'all' || dateRange.from) && (
              <button 
-               onClick={() => {
-                 setSearch('')
-                 setFilterType('all')
-                 setFilterCategory('all')
-                 setDateRange({ from: '', to: '' })
-               }}
+                onClick={() => {
+                  setSearch('')
+                  setFilterType('all')
+                  setFilterCategory('all')
+                  setFilterStatus('all')
+                  setFilterMethod('all')
+                  setDateRange({ from: '', to: '' })
+                }}
                className="px-3 py-2 text-sm text-muted-foreground hover:bg-muted rounded-lg"
              >
                Clear
